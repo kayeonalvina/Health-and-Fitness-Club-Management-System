@@ -49,7 +49,7 @@ CREATE TABLE Inventory (
 );
 
 CREATE TABLE Calendar (
-    time_week VARCHAR(50) NOT NULL,
+    time_week VARCHAR(11) NOT NULL,
     monday INT,
     tuesday INT,
     wednesday INT,
