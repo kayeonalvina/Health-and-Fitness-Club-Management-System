@@ -18,18 +18,18 @@ CREATE TABLE Members (
     body_fat FLOAT,
     goal VARCHAR(255),
     time_weeks INT,
-    balance FLOAT,
-    events[]
+    balance FLOAT
+    --events[]
 );
 
 CREATE TABLE Trainers (
     trainer_id SERIAL PRIMARY KEY,
-    person_id INT REFERENCES People(person_id),
-    events[]
+    person_id INT REFERENCES People(person_id)
+    --events[]
 );
 
 CREATE TABLE Admin (
-    admin_id SERIAL PRIMARY KEY
+    admin_id SERIAL PRIMARY KEY,
     person_id INT REFERENCES People(person_id)
 );
 
@@ -37,8 +37,8 @@ CREATE TABLE Events (
     event_id SERIAL PRIMARY KEY,
     trainer_name VARCHAR(255) NOT NULL,
     room INT,
-    equipment[]
-    members[]
+    --equipment[]
+    --members[]
     cost FLOAT,
     available INT,
     total_capacity INT
@@ -60,16 +60,16 @@ CREATE TABLE Calendar (
     thursday INT,
     friday INT,
     saturday INT,
-    sunday INT,
+    sunday INT
 );
 
 INSERT INTO Calendar (time_week, monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 VALUES
-(9:00-10:00, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(10:00-11:00, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(11:00-12:00, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(13:00-15:00, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(15:00-17:00, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(17:00-19:00, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(19:00-21:00, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(21:00-22:00, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+('9:00-10:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('10:00-11:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('11:00-12:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('13:00-15:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('15:00-17:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('17:00-19:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('19:00-21:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('21:00-22:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
