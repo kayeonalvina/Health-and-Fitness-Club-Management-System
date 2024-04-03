@@ -1,5 +1,17 @@
+CREATE TABLE People (
+    person_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(15),
+    email VARCHAR(255) NOT NULL UNIQUE,
+    age INT,
+    gender VARCHAR(1) NOT NULL,
+    address VARCHAR(255)
+);
+
 CREATE TABLE Members (
     member_id SERIAL PRIMARY KEY,
+    person_id INT REFERENCES People(person_id),
     init_weight INT,
     final_weight INT,
     height INT,
@@ -12,32 +24,24 @@ CREATE TABLE Members (
 
 CREATE TABLE Trainers (
     trainer_id SERIAL PRIMARY KEY,
+    person_id INT REFERENCES People(person_id),
     events[]
+);
+
+CREATE TABLE Admin (
+    admin_id SERIAL PRIMARY KEY
+    person_id INT REFERENCES People(person_id)
 );
 
 CREATE TABLE Events (
     event_id SERIAL PRIMARY KEY,
-    trainer_name INT,
+    trainer_name VARCHAR(255) NOT NULL,
     room INT,
     equipment[]
     members[]
     cost FLOAT,
     available INT,
     total_capacity INT
-);
-
-CREATE TABLE People (
-    first_name VARCHAR(255) NOT NULL,
-    last_name VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(15),
-    email VARCHAR(255) NOT NULL UNIQUE,
-    age INT,
-    gender VARCHAR(1) NOT NULL,
-    address VARCHAR(255)
-);
-
-CREATE TABLE Admin (
-    admin_id SERIAL PRIMARY KEY
 );
 
 CREATE TABLE Inventory (
