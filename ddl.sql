@@ -26,11 +26,6 @@ CREATE TABLE Trainers (
     person_id INT REFERENCES People(person_id)
 );
 
-CREATE TABLE Admin (
-    admin_id SERIAL PRIMARY KEY,
-    person_id INT REFERENCES People(person_id)
-);
-
 CREATE TABLE Events (
     event_id SERIAL PRIMARY KEY,
     trainer_name VARCHAR(255) NOT NULL,
