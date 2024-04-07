@@ -5,9 +5,9 @@ INSERT INTO People (first_name, last_name, phone_number, email, age, gender, add
 ('Jane', 'Smith', '234-567-8901', 'jane.smith@example.com', 25, 'F', '456 Oak Ave'),
 ('Bob', 'Johnson', '345-678-9012', 'bob.johnson@example.com', 35, 'M', '789 Pine Ln'),
 ('Alice', 'Williams', '456-789-0123', 'alice.williams@example.com', 28, 'F', '321 Elm St'),
-('Charlie', 'Brown', '567-890-1234', 'charlie.brown@example.com', 32, 'M', '654 Spruce Dr');
-('David', 'Davis', '678-901-2345', 'david.davis@example.com', 29, 'M', '987 Birch Rd');
-('Eve', 'Evans', '789-012-3456', 'eve.evans@example.com', 27, 'F', '210 Cedar Ave');
+('Charlie', 'Brown', '567-890-1234', 'charlie.brown@example.com', 32, 'M', '654 Spruce Dr'),
+('David', 'Davis', '678-901-2345', 'david.davis@example.com', 29, 'M', '987 Birch Rd'),
+('Eve', 'Evans', '789-012-3456', 'eve.evans@example.com', 27, 'F', '210 Cedar Ave'),
 ('Frank', 'Franklin', '890-123-4567', 'frank.franklin@example.com', 31, 'M', '543 Maple St');
 
 INSERT INTO Members (person_id, init_weight, final_weight, height, body_fat, goal, time_weeks, balance) VALUES
@@ -25,9 +25,9 @@ INSERT INTO Trainers (person_id) VALUES
 INSERT INTO Events (trainer_id, room, cost, available, total_capacity) VALUES
 (6, 101, 50.00, 0, 1),
 (7, 102, 75.00, 0, 1),
-(8, 103, 100.00, 1, 1);
-(6, 104, 125.00, 2, 5);
-(7, 105, 25.00, 0, 1);
+(8, 103, 100.00, 1, 1),
+(6, 104, 125.00, 2, 5),
+(7, 105, 25.00, 0, 1),
 (8, 105, 150.00, 0, 5);
 
 INSERT INTO MemberEvents (member_id, event_id, day_of_week, start_hour, end_hour) VALUES
