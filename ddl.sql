@@ -28,7 +28,7 @@ CREATE TABLE Trainers (
 
 CREATE TABLE Events (
     event_id SERIAL PRIMARY KEY,
-    trainer_name VARCHAR(255) NOT NULL,
+    trainer_id INT REFERENCES Trainers(trainer_id),
     room INT,
     cost FLOAT,
     available INT,
