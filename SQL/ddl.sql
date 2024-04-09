@@ -38,17 +38,23 @@ CREATE TABLE Events (
 CREATE TABLE MemberEvents (
     member_id INT REFERENCES Members(member_id),
     event_id INT REFERENCES Events(event_id),
-    PRIMARY KEY (member_id, event_id)
+    PRIMARY KEY (member_id, event_id),
     day_of_week INT,
     start_hour INT,
     end_hour INT
 );
 
-CREATE TABLE Inventory (
-    inventory_id SERIAL PRIMARY KEY,
+CREATE TABLE Equipment (
+    equipment_id SERIAL PRIMARY KEY,
     event_id INT REFERENCES Events(event_id),
-    equipment_name VARCHAR(255) NOT NULL,
+    label VARCHAR(255) NOT NULL,
     defective_count INT,
-    total_quantity INT,
-    in_use INT
+    total_quantity INT
+);
+
+CREATE TABLE EquipmentUsage (
+    equipment_id INT REFERENCES Equipment(equipment_id),
+    event_id INT REFERENCES Events(event_id),
+    PRIMARY KEY (equipment_id, event_id),
+    num_in_use INT
 );
