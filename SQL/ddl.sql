@@ -9,9 +9,15 @@ CREATE TABLE People (
     address VARCHAR(255)
 );
 
+CREATE TABLE ExerciseRoutines (
+    routine_id SERIAL PRIMARY KEY,
+    description VARCHAR(1023)
+);
+
 CREATE TABLE Members (
     member_id SERIAL PRIMARY KEY,
     person_id INT REFERENCES People(person_id),
+    routine_id INT REFERENCES ExerciseRoutines(routine_id),
     init_weight INT,
     final_weight INT,
     height INT,
@@ -21,9 +27,27 @@ CREATE TABLE Members (
     balance FLOAT
 );
 
+CREATE TABLE FitnessAchievements (
+    achievement_id SERIAL PRIMARY KEY,
+    description VARCHAR(255)
+);
+
+CREATE TABLE MemberAchievements (
+    member_id INT REFERENCES Members(member_id),
+    achievement_id INT REFERENCES FitnessAchievements(achievement_id),
+    PRIMARY KEY (member_id, achievement_id),
+    date_achieved DATE
+);
+
 CREATE TABLE Trainers (
     trainer_id SERIAL PRIMARY KEY,
     person_id INT REFERENCES People(person_id)
+);
+
+CREATE TABLE Availability (
+    trainer_id INT REFERENCES Trainers(trainer_id),
+    day_of_week INT,
+    start_timeslot INT
 );
 
 CREATE TABLE Events (
