@@ -64,8 +64,7 @@ CREATE TABLE MemberEvents (
     event_id INT REFERENCES Events(event_id),
     PRIMARY KEY (member_id, event_id),
     day_of_week INT,
-    start_hour INT,
-    end_hour INT
+    start_hour INT
 );
 
 CREATE TABLE Equipment (
