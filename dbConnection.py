@@ -22,7 +22,7 @@ def executeQuery(connection, query):
     try:
         cursor.execute(query)
         connection.commit()
-        print("Query executed successfully")
+        # print("Query executed successfully")
     except OperationalError as e:
         print(f"The error '{e}' occurred")
 
@@ -31,7 +31,7 @@ def executeSelectQuery(connection, query, getAll=True):
     try:
         cursor.execute(query)
         connection.commit()
-        print("Query executed successfully")
+        # print("Query executed successfully")
 
         if(getAll):
             result = cursor.fetchall()

@@ -47,7 +47,7 @@ CREATE TABLE Trainers (
 CREATE TABLE Availability (
     trainer_id INT REFERENCES Trainers(trainer_id),
     day_of_week INT,
-    start_timeslot INT
+    start_hour INT
 );
 
 CREATE TABLE Events (
@@ -69,7 +69,6 @@ CREATE TABLE MemberEvents (
 
 CREATE TABLE Equipment (
     equipment_id SERIAL PRIMARY KEY,
-    event_id INT REFERENCES Events(event_id),
     label VARCHAR(255) NOT NULL,
     defective_count INT,
     total_quantity INT

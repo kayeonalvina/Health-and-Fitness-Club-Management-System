@@ -1,6 +1,8 @@
 import customInput
 import dbConnection
 import member
+import trainer
+import admin
 
 def main():
     connection = dbConnection.createConnection("healthclub", "postgres", "password", "127.0.0.1", "5432")
@@ -39,12 +41,13 @@ def main():
             result = dbConnection.executeSelectQuery(connection, query, False)
             if result:
                 print("Logged in as Trainer.")
-                print(result)
+                trainer.trainerSession(connection, result)
             else:
                 print("Trainer not found.")
             
         elif role == 3:
             print("Logged in as Admin.")
+            admin.adminSession(connection)
         
         else:
             print("Invalid input. Please try again.")

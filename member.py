@@ -131,9 +131,12 @@ def viewProfile(connection, member):
 def viewDashboard(connection, member):
     print("Your dashboard:")
 
-    print("\nExercise Routine:\n", dbConnection.executeSelectQuery(connection, f"SELECT description FROM ExerciseRoutines NATURAL JOIN Members WHERE member_id = '{member['routine_id']}'"))
+    print("\nExercise Routine:\n", dbConnection.executeSelectQuery(connection, f"SELECT description FROM ExerciseRoutines NATURAL JOIN Members WHERE member_id = '{member['routine_id']}'", False)['description'])
 
-    print("Fitness Achievements:\n", dbConnection.executeSelectQuery(connection, f"SELECT description, date_achieved FROM MemberAchievements NATURAL JOIN FitnessAchievements WHERE member_id = '{member['member_id']}'"), False)
+    print("Fitness Achievements:")
+    achievements = dbConnection.executeSelectQuery(connection, f"SELECT * FROM MemberAchievements NATURAL JOIN FitnessAchievements WHERE member_id = '{member['member_id']}'")
+    for achievement in achievements:
+        print(f"{achievement['description']} on {achievement['date_achieved']}")
 
     print("Health information:")
     print("Fitness goal:", member['goal'])
@@ -175,15 +178,19 @@ def addEvent(connection, member, schedule):
             query = f"SELECT * FROM Availability WHERE day_of_week = '{day}' AND start_timeslot BETWEEN '{time[0]}' AND '{time[1]}'"
             events += dbConnection.executeSelectQuery(connection, query)
 
-            query = f"SELECT event_id, day_of_week, start_hour FROM MemberEvents NATURAL JOIN Events WHERE day_of_week = '{day}' AND start_hour BETWEEN '{time[0]}' AND '{time[1]} AND available \= total_capacity'"
+            query = f"SELECT event_id, day_of_week, start_hour FROM MemberEvents NATURAL JOIN Events WHERE day_of_week = '{day}' AND start_hour BETWEEN '{time[0]}' AND '{time[1]}' AND available < total_capacity"
             events += dbConnection.executeSelectQuery(connection, query)
     
+    if(not events):
+        print("No events available at any of the specified times.")
+        return
+
     print("The following events are available:")
     printSchedule(connection, events)
 
     while True:
         print("Enter the event ID you would like to add(-1 to cancel).\n If you wish to add multiple events, either enter a range of events in the format \"start-end\", or seperate event IDs by commas, or both:")
-        eventIndex = customInput.inputFormatted()
+        eventIndex = int(customInput.inputFormatted())
 
         if(eventIndex == -1):
             print("Cancelling addition.")

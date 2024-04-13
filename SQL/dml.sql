@@ -43,7 +43,7 @@ INSERT INTO Trainers (person_id) VALUES
 (7),
 (8);
 
-INSERT INTO Availability (trainer_id, day_of_week, start_timeslot) VALUES
+INSERT INTO Availability (trainer_id, day_of_week, start_hour) VALUES
 (1, 1, 8),
 (1, 2, 9),
 (1, 3, 10),
@@ -88,13 +88,13 @@ INSERT INTO MemberEvents (member_id, event_id, day_of_week, start_hour) VALUES
 (4, 6, 6, 13),
 (5, 6, 6, 13);
 
-INSERT INTO Equipment (event_id, label, defective_count, total_quantity) VALUES
-(3, 'Dumbbells', 0, 10),
-(4, 'Kettlebells', 1, 5),
-(5, 'Resistance bands', 0, 10),
-(6, 'Yoga mats', 0, 5),
-(6, 'Medicine balls', 0, 5),
-(6, 'Jump ropes', 0, 5);
+INSERT INTO Equipment (label, defective_count, total_quantity) VALUES
+('Dumbbells', 0, 10),
+('Kettlebells', 1, 5),
+('Resistance bands', 0, 10),
+('Yoga mats', 0, 5),
+('Medicine balls', 0, 5),
+('Jump ropes', 0, 5);
 
 INSERT INTO EquipmentUsage (equipment_id, event_id, num_in_use) VALUES
 (1, 3, 4),
