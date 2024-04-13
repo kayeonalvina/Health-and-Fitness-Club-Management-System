@@ -69,7 +69,6 @@ CREATE TABLE MemberEvents (
 
 CREATE TABLE Equipment (
     equipment_id SERIAL PRIMARY KEY,
-    event_id INT REFERENCES Events(event_id),
     label VARCHAR(255) NOT NULL,
     defective_count INT,
     total_quantity INT
