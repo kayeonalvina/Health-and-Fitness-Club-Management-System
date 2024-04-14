@@ -32,10 +32,10 @@ def trainerSession(connection, trainer):
             setAvailability(connection, trainer)
 
         elif choice == 2:
-            print("Enter member email:")
-            email = customInput.inputFormatted()
+            print("Enter member name:")
+            name = customInput.inputFormatted().split()
 
-            query = f"SELECT * FROM Members NATURAL JOIN People WHERE email = '{email}'"
+            query = f"SELECT * FROM Members NATURAL JOIN People WHERE first_name = {name[0]} AND last_name = {name[1]}"
             result = dbConnection.executeSelectQuery(connection, query, False)
             if result:
                 member.viewProfile(connection, result)

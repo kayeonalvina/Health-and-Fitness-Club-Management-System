@@ -62,10 +62,13 @@ def adminSession(connection):
                 member.printSchedule(connection, result)
 
                 noRoomIDs = []
+                index = 1
 
                 for event in result:
                     if not event["room"]:
-                        noRoomIDs.append(str(event["event_id"]))
+                        noRoomIDs.append(str(index))
+                    
+                    index += 1
                 
                 if(noRoomIDs):
                     print(f"NOTE: Events number {','.join(noRoomIDs)} do not have a room assigned to them.")
