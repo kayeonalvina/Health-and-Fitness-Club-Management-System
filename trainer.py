@@ -33,7 +33,7 @@ def trainerSession(connection, trainer):
 
         elif choice == 2:
             print("Enter member name:")
-            name = customInput.inputFormatted().split()
+            name = customInput.inputFormatted().split(" ")
 
             query = f"SELECT * FROM Members NATURAL JOIN People WHERE first_name = {name[0]} AND last_name = {name[1]}"
             result = dbConnection.executeSelectQuery(connection, query, False)
