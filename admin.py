@@ -3,7 +3,7 @@ import dbConnection
 import member
 
 def roomAvailable(connection, room, event):
-    query = f"SELECT * FROM Events NATURAL JOIN MemberEvents WHERE room = '{room}' AND date = '{event['date']}' AND start_time = '{event['start_time']}'"
+    query = f"SELECT * FROM Events NATURAL JOIN MemberEvents WHERE room = '{room}' AND day_of_week = '{event['day_of_week']}' AND start_hour = '{event['start_hour']}'"
     result = dbConnection.executeSelectQuery(connection, query)
 
     if result:
@@ -30,17 +30,16 @@ def equipmentAvailable(connection, equipmentID, newMax):
     equipmentUsage = {}
 
     for event in events:
-        equipmentUsage[(event['day_of_week'], event['start_time'])] = equipmentUsage.setdefault((event['day_of_week'], event['start_time']), 0) + event['num_in_use']
-        if(equipmentUsage[(event['day_of_week'], event['start_time'])] > newMax):
+        equipmentUsage[(event['day_of_week'], event['start_hour'])] = equipmentUsage.setdefault((event['day_of_week'], event['start_hour']), 0) + event['num_in_use']
+        if(equipmentUsage[(event['day_of_week'], event['start_hour'])] > newMax):
             print("Equipment is not available at that time. Unable to perform action.")
             return False
         
     return True
 
 def adminSession(connection):
-    print("What would you like to do?")
-
     while True:
+        print("What would you like to do?")
         print("1. Manage room bookings")
         print("2. Manage equipment")
         print("3. Update schedule")
@@ -54,22 +53,23 @@ def adminSession(connection):
             break
 
         elif choice == 1:
-            print("Here are the current events:")
-
-            query = "SELECT * FROM Events NATURAL JOIN MemberEvents"
-            result = dbConnection.executeSelectQuery(connection, query)
-
-            member.printSchedule(connection, result)
-
-            noRoomIDs = []
-
-            for event in result:
-                if not event["room"]:
-                    noRoomIDs.append(event["event_id"])
-                
-            print(f"NOTE: Events number {','.join(noRoomIDs)} do not have a room assigned to them.")
-
             while True:
+                print("Here are the current events:")
+
+                query = "SELECT * FROM Events NATURAL JOIN MemberEvents"
+                result = dbConnection.executeSelectQuery(connection, query)
+
+                member.printSchedule(connection, result)
+
+                noRoomIDs = []
+
+                for event in result:
+                    if not event["room"]:
+                        noRoomIDs.append(str(event["event_id"]))
+                
+                if(noRoomIDs):
+                    print(f"NOTE: Events number {','.join(noRoomIDs)} do not have a room assigned to them.")
+
                 print("Which event would you like to assign a room to?(-1 to cancel)")
                 eventID = int(customInput.inputFormatted())
 
@@ -90,9 +90,8 @@ def adminSession(connection):
                     print("Room assigned.")
 
         elif choice == 2:
-            allEquipment = dbConnection.executeSelectQuery(connection, "SELECT * FROM Equipment")
-
             while True:
+                allEquipment = dbConnection.executeSelectQuery(connection, "SELECT * FROM Equipment")
                 print("All equipment:")
                 equipmentID = 1
 
@@ -114,7 +113,7 @@ def adminSession(connection):
                 print("Enter the quantity to mark as defective. \nAlternatively, you can enter a negative number to mark defective equipment no longer defective:")
                 quantity = int(customInput.inputFormatted())
 
-                if(0 > allEquipment[equipmentID - 1]["defective_count"] - quantity or allEquipment[equipmentID - 1]["defective_count"] - quantity > allEquipment[equipmentID - 1]["total_quantity"]):
+                if((quantity < 0 and 0 > allEquipment[equipmentID - 1]["defective_count"] + quantity) or (quantity >= 0 and allEquipment[equipmentID - 1]["defective_count"] + quantity > allEquipment[equipmentID - 1]["total_quantity"])):
                     print("Input is out of bounds, assuming maximum possible value.")
 
                     if quantity > 0:
@@ -127,14 +126,13 @@ def adminSession(connection):
                         quantity = -allEquipment[equipmentID - 1]["defective_count"]
                         print(f"Marking {quantity} equipment as not defective.")
                 
-                query = f"UPDATE Equipment SET defective_count = defective_count - {quantity} WHERE equipment_id = '{allEquipment[equipmentID - 1]['equipment_id']}'"
+                query = f"UPDATE Equipment SET defective_count = defective_count + {quantity} WHERE equipment_id = '{allEquipment[equipmentID - 1]['equipment_id']}'"
                 dbConnection.executeQuery(connection, query)
                 print("Equipment updated.")
             
         elif choice == 3:
-            weekSchedule = dbConnection.executeSelectQuery(connection, "SELECT * FROM Events NATURAL JOIN MemberEvents")
-
             while True:
+                weekSchedule = dbConnection.executeSelectQuery(connection, "SELECT * FROM Events NATURAL JOIN MemberEvents")
                 print("Weekly events:")
                 member.printSchedule(connection, weekSchedule)
 
@@ -154,22 +152,21 @@ def adminSession(connection):
                 day = customInput.inputFormatted()
 
                 print("Enter the new start time. Note that each event is 1 hour long:")
-                start_time = customInput.inputFormatted()
+                startHour = customInput.inputFormatted()
 
-                if(roomAvailable(connection, weekSchedule[eventID - 1]["room"], {"date": weekSchedule[eventID - 1]["date"], "start_time": start_time})):
-                    query = f"UPDATE MemberEvents SET day_of_week = '{day}', start_time = '{start_time}' WHERE event_id = '{weekSchedule[eventID - 1]['event_id']}'"
+                if(roomAvailable(connection, weekSchedule[eventID - 1]["room"], {"day_of_week": weekSchedule[eventID - 1]["day_of_week"], "start_hour": startHour})):
+                    query = f"UPDATE MemberEvents SET day_of_week = '{day}', start_hour = '{startHour}' WHERE event_id = '{weekSchedule[eventID - 1]['event_id']}'"
                     dbConnection.executeQuery(connection, query)
                     print("Schedule updated.")
 
         elif choice == 4:
-            allMembers = dbConnection.executeSelectQuery(connection, "SELECT * FROM Members NATURAL JOIN People")
-
             while True:
+                allMembers = dbConnection.executeSelectQuery(connection, "SELECT * FROM Members NATURAL JOIN People")
                 print("All members:")
                 memberID = 1
 
-                for member in allMembers:
-                    print(f"ID #{memberID}: {member['first_name']} {member['last_name']}: {member['balance']}")
+                for m in allMembers:
+                    print(f"ID #{memberID}: {m['first_name']} {m['last_name']}: {m['balance']}")
                     memberID += 1
                 
                 print("Select a member ID to process a payment for (-1 to cancel):")
@@ -184,7 +181,7 @@ def adminSession(connection):
                     continue
 
                 print("Enter the amount to pay:")
-                amount = customInput.inputFormatted()
+                amount = int(customInput.inputFormatted())
 
                 if(canPay(connection, allMembers[memberID - 1]["member_id"], amount)):
                     query = f"UPDATE Members SET balance = balance - {amount} WHERE member_id = '{allMembers[memberID - 1]['member_id']}'"
