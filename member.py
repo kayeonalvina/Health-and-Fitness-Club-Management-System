@@ -131,18 +131,31 @@ def viewProfile(connection, member):
 def viewDashboard(connection, member):
     print("Your dashboard:")
 
-    print("\nExercise Routine:\n", dbConnection.executeSelectQuery(connection, f"SELECT description FROM ExerciseRoutines NATURAL JOIN Members WHERE member_id = '{member['routine_id']}'", False)['description'])
+    if(member['routine_id']):
+        print("\nExercise Routine:\n", dbConnection.executeSelectQuery(connection, f"SELECT description FROM ExerciseRoutines NATURAL JOIN Members WHERE member_id = '{member['routine_id']}'", False)['description'])
+    
+    else:
+        print("No exercise routine assigned.")
 
     print("Fitness Achievements:")
     achievements = dbConnection.executeSelectQuery(connection, f"SELECT * FROM MemberAchievements NATURAL JOIN FitnessAchievements WHERE member_id = '{member['member_id']}'")
-    for achievement in achievements:
-        print(f"{achievement['description']} on {achievement['date_achieved']}")
+    
+    if(not achievements):
+        print("No achievements yet.")
+    
+    else:
+        for achievement in achievements:
+            print(f"{achievement['description']} on {achievement['date_achieved']}")
 
     print("Health information:")
     print("Fitness goal:", member['goal'])
     print("Timeframe:", member['time_weeks'])
 
 def printSchedule(connection, schedule):
+    if(not schedule):
+        print("No events at the moment.")
+        return
+
     eventID = 1
     daysOfWeek = {
         1: "Monday",
@@ -157,7 +170,12 @@ def printSchedule(connection, schedule):
     for event in schedule:
         trainerName = dbConnection.executeSelectQuery(connection, f"SELECT first_name, last_name FROM Trainers NATURAL JOIN People WHERE trainer_id = '{event['trainer_id']}'", False)
         trainerName = f"{trainerName['first_name']} {trainerName['last_name']}"
-        print(f"ID: {eventID}: {daysOfWeek[event['day_of_week']]}, {event['start_hour']} - {event['start_hour'] + 1}: Room #{event['room']} with {trainerName}")
+
+        if(event.get('room')):
+            print(f"ID: {eventID}: {daysOfWeek[event['day_of_week']]}, {event['start_hour']} - {event['start_hour'] + 1}: Room #{event['room']} with {trainerName}")
+        else:
+            print(f"ID: {eventID}: {daysOfWeek[event['day_of_week']]}, {event['start_hour']} - {event['start_hour'] + 1}: with {trainerName}")
+        
         eventID += 1
 
 def viewSchedule(connection, member):
@@ -175,10 +193,10 @@ def addEvent(connection, member, schedule):
 
     for day in datetimes:
         for time in datetimes[day]:
-            query = f"SELECT * FROM Availability WHERE day_of_week = '{day}' AND start_timeslot BETWEEN '{time[0]}' AND '{time[1]}'"
+            query = f"SELECT * FROM Availability WHERE day_of_week = '{day}' AND start_hour BETWEEN '{time[0]}' AND '{time[1]}'"
             events += dbConnection.executeSelectQuery(connection, query)
 
-            query = f"SELECT event_id, day_of_week, start_hour FROM MemberEvents NATURAL JOIN Events WHERE day_of_week = '{day}' AND start_hour BETWEEN '{time[0]}' AND '{time[1]}' AND available < total_capacity"
+            query = f"SELECT event_id, trainer_id, day_of_week, start_hour FROM MemberEvents NATURAL JOIN Events WHERE day_of_week = '{day}' AND start_hour BETWEEN '{time[0]}' AND '{time[1]}' AND available < total_capacity"
             events += dbConnection.executeSelectQuery(connection, query)
     
     if(not events):
@@ -188,38 +206,38 @@ def addEvent(connection, member, schedule):
     print("The following events are available:")
     printSchedule(connection, events)
 
-    while True:
-        print("Enter the event ID you would like to add(-1 to cancel).\n If you wish to add multiple events, either enter a range of events in the format \"start-end\", or seperate event IDs by commas, or both:")
-        eventIndex = int(customInput.inputFormatted())
+    print("Enter the event ID you would like to add(-1 to cancel):")
+    eventIndex = int(customInput.inputFormatted())
 
-        if(eventIndex == -1):
-            print("Cancelling addition.")
-            break
+    if(eventIndex == -1):
+        print("Cancelling addition.")
+        return
 
-        elif eventIndex < 1 or eventIndex > len(events):
-            print("Invalid event ID. Please try again.")
-        
-        else:
-            print(f"Are you sure you want to add event {eventIndex}? (y/n)")
-            confirm = customInput.inputFormatted()
+    elif eventIndex < 1 or eventIndex > len(events):
+        print("Invalid event ID. Please try again.")
+    
+    else:
+        print(f"Are you sure you want to add event {eventIndex}? (y/n)")
+        confirm = customInput.inputFormatted()
 
-            if confirm == "y":
-                if(events[eventIndex - 1].get('event_id')):
-                    query = f"UPDATE Events SET available = available + 1 WHERE event_id = '{events[eventIndex - 1]['event_id']}'"
-                    dbConnection.executeQuery(connection, query)
+        if confirm == "y":
+            if(events[eventIndex - 1].get('event_id')):
+                query = f"UPDATE Events SET available = available + 1 WHERE event_id = '{events[eventIndex - 1]['event_id']}'"
+                dbConnection.executeQuery(connection, query)
 
-                else:
-                    query = f"INSERT INTO Events (trainer_id) VALUES ('{events[eventIndex - 1]['trainer_id']}')"
-                    dbConnection.executeQuery(connection, query)
+            else:
+                query = f"INSERT INTO Events (trainer_id) VALUES ('{events[eventIndex - 1]['trainer_id']}')"
+                dbConnection.executeQuery(connection, query)
 
-                    eventID = dbConnection.executeSelectQuery(connection, "SELECT MAX(event_id) FROM Events", False)
+                eventID = dbConnection.executeSelectQuery(connection, "SELECT MAX(event_id) FROM Events", False)
 
-                    query = f"INSERT INTO MemberEvents (member_id, event_id, day_of_week, start_hour) VALUES ('{member['member_id']}', '{eventID}', '{events[eventIndex - 1]['day_of_week']}', '{events[eventIndex - 1]['start_hour']}')"
-                    dbConnection.executeQuery(connection, query)
-                    print("Event added.")
+                query = f"INSERT INTO MemberEvents (member_id, event_id, day_of_week, start_hour) VALUES ('{member['member_id']}', '{eventID['max']}', '{events[eventIndex - 1]['day_of_week']}', '{events[eventIndex - 1]['start_hour']}')"
+                dbConnection.executeQuery(connection, query)
+                print("Event added.")
 
 def removeEvent(connection, member, schedule):
     while True:
+        printSchedule(connection, schedule)
         print("Enter the event ID you would like to remove(-1 to cancel):")
         eventID = int(customInput.inputFormatted())
 
@@ -242,9 +260,8 @@ def removeEvent(connection, member, schedule):
 
 
 def memberSession(connection, member):
-    print("What would you like to do?")
-
     while True:
+        print("What would you like to do?")
         print("1. View and edit profile")
         print("2. View dashboard")
         print("3. Manage schedule")

@@ -10,15 +10,14 @@ def setAvailability(connection, trainer):
     for day in datetimes:
         for time in datetimes[day]:
             for i in range(time[0], time[1]):
-                query = f"INSERT INTO TrainerAvailability (trainer_id, day_of_week, hour) VALUES ('{trainer['trainer_id']}', '{day}', '{i}')"
+                query = f"INSERT INTO Availability (trainer_id, day_of_week, start_hour) VALUES ('{trainer['trainer_id']}', '{day}', '{i}')"
                 dbConnection.executeQuery(connection, query)
     
     print("Availability set.")
 
 def trainerSession(connection, trainer):
-    print("What would you like to do?")
-
     while True:
+        print("What would you like to do?")
         print("1. Set availability")
         print("2. View member profile")
         print("0. Log out")
