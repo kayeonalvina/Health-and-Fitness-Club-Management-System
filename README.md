@@ -8,7 +8,8 @@ This requires pgAdmin 4, which is a GUI for PostgreSQL. You can download it from
 
 1. Open up pgAdmin 4 and create a new Database, named "healthclub".
 2. Go to "postgres" in "Login/Group Roles" and access the Properties. In the Definition tab, set up the password to be "password".
-3. Use the ddl and dml .sql files to create sample data for the tables, or you can substitute dml.sql with your own data of choice. You can erase the database by using clear.sql.
+3. If password changed, restart pgAdmin4.
+4. Use the ddl and dml .sql files to create sample data for the tables, or you can substitute dml.sql with your own data of choice. You can erase the database by using clear.sql.
 
 # Running The Program
 
