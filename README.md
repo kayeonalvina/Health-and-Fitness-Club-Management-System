@@ -15,6 +15,10 @@ This requires pgAdmin 4, which is a GUI for PostgreSQL. You can download it from
 
 Using a command line in the appropriate directory, run "python main.py" to run the Command-Line Interface of this program. You will recieve input until you explicitly state to exit.
 
+# Project Report
+
+It is located in the folder with the name of: COMP 3005 Project Report.pdf
+
 # Video Demonstration
 
-Coming soon!
+
