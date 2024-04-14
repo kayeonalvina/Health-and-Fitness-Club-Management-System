@@ -18,7 +18,3 @@ Using a command line in the appropriate directory, run "python main.py" to run t
 # Video Demonstration
 
 Coming soon!
-
-# Project Report
-
-Coming soon!
